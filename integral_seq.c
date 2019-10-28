@@ -22,9 +22,6 @@ float calculaIntegralSequencial()
 
     div = (float)(limite_superior - limite_inferior) / numero_intervalos;
 
-    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
-    retangulo_maior = fabs(retangulo_maior);
-
     for (i = 1; i <= numero_intervalos; i++)
     {
         resp += div * funcaoD((limite_inferior + (div * i)) - (div / 2));
@@ -58,6 +55,9 @@ int main(int argc, char *argv[])
     limite_superior = atoi(argv[3]);
 
     GET_TIME(inicio);
+
+    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
+    retangulo_maior = fabs(retangulo_maior);
 
     resp_seq = calculaIntegralSequencial();
 

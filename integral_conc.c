@@ -3,60 +3,28 @@
 #include <pthread.h>
 #include <math.h>
 
-int nthreads, limite_inferior, limite_superior, numero_intervalos = 2, n_threads_executadas = 0, lock=0, calculou = 0;
+int nthreads, limite_inferior, limite_superior, numero_intervalos = 2, n_threads_executadas = 0, lock = 0, calculou = 0;
 float erro, resp_conc, retangulo_maior;
 pthread_mutex_t mutex;
 pthread_cond_t cond;
 
-float funcaoA(float x)
-{
-    return 1 + x;
-}
-
-float funcaoB(float x)
-{
-    if (x < -1 || x > 1)
-    {
-        printf("Não é possível calcular o valor da função nesse intervalo\n");
-        exit(-1);
-    }
-    return sqrt(1 - pow(x, 2));
-}
-
-float funcaoC(float x)
-{
-    return sqrt(1 + pow(x, 4));
-}
-
-float funcaoD(float x)
-{
-    return sin(pow(x, 2));
-}
-
-float funcaoE(float x)
-{
-    return cos(pow(M_E, -x));
-}
-
-float funcaoF(float x)
-{
-    return cos(pow(M_E, -x)) * x;
-}
-
-float funcaoG(float x)
-{
-    return cos(pow(M_E, -x)) * (0.005 * pow(x, 3) + 1);
-}
+float funcaoA(float x);
+float funcaoB(float x);
+float funcaoC(float x);
+float funcaoD(float x);
+float funcaoE(float x);
+float funcaoF(float x);
+float funcaoG(float x);
 
 void *calculaIntegralConcorrente(void *arg)
 {
     int i, thread_id = *(int *)arg;
     float div, resp;
-    
+
     while (!calculou)
     {
         div = (float)(limite_superior - limite_inferior) / numero_intervalos;
-        
+
         resp = 0;
         for (i = thread_id; i <= numero_intervalos; i += nthreads)
         {
@@ -66,7 +34,6 @@ void *calculaIntegralConcorrente(void *arg)
         pthread_mutex_lock(&mutex);
         resp_conc += resp;
         n_threads_executadas++;
-        
 
         if (n_threads_executadas < nthreads)
         {
@@ -88,19 +55,17 @@ void *calculaIntegralConcorrente(void *arg)
             {
                 while (lock != nthreads - 1)
                 {
-                    
                 }
-                
+
                 numero_intervalos++;
                 retangulo_maior = resp_conc;
-                resp_conc=0;
+                resp_conc = 0;
                 n_threads_executadas = 0;
                 pthread_cond_broadcast(&cond);
             }
         }
-        
-        pthread_mutex_unlock(&mutex);
 
+        pthread_mutex_unlock(&mutex);
     }
 
     pthread_exit(NULL);
@@ -165,4 +130,44 @@ int main(int argc, char *argv[])
     pthread_mutex_destroy(&mutex);
 
     return 0;
+}
+
+float funcaoA(float x)
+{
+    return 1 + x;
+}
+
+float funcaoB(float x)
+{
+    if (x < -1 || x > 1)
+    {
+        printf("Não é possível calcular o valor da função nesse intervalo\n");
+        exit(-1);
+    }
+    return sqrt(1 - pow(x, 2));
+}
+
+float funcaoC(float x)
+{
+    return sqrt(1 + pow(x, 4));
+}
+
+float funcaoD(float x)
+{
+    return sin(pow(x, 2));
+}
+
+float funcaoE(float x)
+{
+    return cos(pow(M_E, -x));
+}
+
+float funcaoF(float x)
+{
+    return cos(pow(M_E, -x)) * x;
+}
+
+float funcaoG(float x)
+{
+    return cos(pow(M_E, -x)) * (0.005 * pow(x, 3) + 1);
 }
