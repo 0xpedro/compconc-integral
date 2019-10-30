@@ -27,14 +27,14 @@ float calculaIntegralSequencial()
         resp += div * funcaoD((limite_inferior + (div * i)) - (div / 2));
     }
 
-    if (fabs(retangulo_maior - resp) < erro)
+    if (fabs(retangulo_maior - fabs(resp)) < erro)
     {
-        return resp;
+        return fabs(resp);
     }
     else
     {
         numero_intervalos++;
-        retangulo_maior = resp;
+        retangulo_maior = fabs(resp);
         calculaIntegralSequencial();
     }
 }
