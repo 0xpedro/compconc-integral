@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include "timer.h"
 
 int nthreads, limite_inferior, limite_superior, numero_intervalos = 2, n_threads_executadas = 0, lock = 0, calculou = 0;
 float erro, resp_conc, retangulo_maior;
@@ -28,7 +29,7 @@ void *calculaIntegralConcorrente(void *arg)
         resp = 0;
         for (i = thread_id; i <= numero_intervalos; i += nthreads)
         {
-            resp += div * funcaoD((limite_inferior + (div * i)) - (div / 2));
+            resp += div * funcaoA((limite_inferior + (div * i)) - (div / 2));
         }
 
         pthread_mutex_lock(&mutex);
@@ -75,6 +76,7 @@ int main(int argc, char *argv[])
 {
     pthread_t *threads;
     int i, *id;
+
     pthread_mutex_init(&mutex, NULL);
 
     if (argc < 5)
@@ -83,12 +85,18 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+    if (atoi(argv[3]) < atoi(argv[4]))
+    {
+        fprintf(stderr, "Informe um limite inferior menor que o limite superior.\n", argv[0]);
+        exit(-1);
+    }
+
     nthreads = atoi(argv[1]);
     erro = atof(argv[2]);
     limite_inferior = atoi(argv[3]);
     limite_superior = atoi(argv[4]);
 
-    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
+    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoA((limite_inferior + limite_superior) / 2);
     retangulo_maior = fabs(retangulo_maior);
 
     threads = (pthread_t *)malloc(sizeof(pthread_t) * nthreads);
