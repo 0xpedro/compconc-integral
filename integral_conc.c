@@ -58,7 +58,7 @@ void *calculaIntegralConcorrente(void *arg)
                 }
 
                 numero_intervalos++;
-                retangulo_maior = resp_conc;
+                retangulo_maior = fabs(resp_conc);
                 resp_conc = 0;
                 n_threads_executadas = 0;
                 pthread_cond_broadcast(&cond);
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
             exit(-1);
         }
     }
-    printf("Resposta da Concorrente: %f\n", resp_conc);
+    printf("Resposta da Concorrente: %f\n", fabs(resp_conc));
 
     pthread_mutex_destroy(&mutex);
 
