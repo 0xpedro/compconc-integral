@@ -29,7 +29,7 @@ void *calculaIntegralConcorrente(void *arg)
         resp = 0;
         for (i = thread_id; i <= numero_intervalos; i += nthreads)
         {
-            resp += div * funcaoA((limite_inferior + (div * i)) - (div / 2));
+            resp += div * funcaoD((limite_inferior + (div * i)) - (div / 2));
         }
 
         pthread_mutex_lock(&mutex);
@@ -38,15 +38,15 @@ void *calculaIntegralConcorrente(void *arg)
 
         if (n_threads_executadas < nthreads)
         {
-            printf("Thread %d lockada\n", thread_id);
+            //printf("Thread %d lockada\n", thread_id);
             lock++;
             pthread_cond_wait(&cond, &mutex);
             lock--;
         }
         else
         {
-            printf("Thread %d fazendo verificação\n", thread_id);
-            printf("valor da diferença entre as areas conc: %f\n", fabs(retangulo_maior - fabs(resp_conc)));
+            //printf("Thread %d fazendo verificação\n", thread_id);
+            //printf("valor da diferença entre as areas conc: %f\n", fabs(retangulo_maior - fabs(resp_conc)));
             if (fabs(retangulo_maior - fabs(resp_conc)) < erro)
             {
                 calculou = 1;
@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 {
     pthread_t *threads;
     int i, *id;
+    double inicio, fim, tempo_total;
 
     pthread_mutex_init(&mutex, NULL);
 
@@ -85,7 +86,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    if (atoi(argv[3]) < atoi(argv[4]))
+    if (atoi(argv[3]) > atoi(argv[4]))
     {
         fprintf(stderr, "Informe um limite inferior menor que o limite superior.\n", argv[0]);
         exit(-1);
@@ -96,8 +97,7 @@ int main(int argc, char *argv[])
     limite_inferior = atoi(argv[3]);
     limite_superior = atoi(argv[4]);
 
-    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoA((limite_inferior + limite_superior) / 2);
-    retangulo_maior = fabs(retangulo_maior);
+    GET_TIME(inicio);
 
     threads = (pthread_t *)malloc(sizeof(pthread_t) * nthreads);
     if (threads == NULL)
@@ -106,6 +106,15 @@ int main(int argc, char *argv[])
         printf("--ERRO: malloc do tid\n");
         exit(-1);
     }
+
+    GET_TIME(fim);
+    tempo_total = fim - inicio;
+    printf("Tempo de inicialização das %d threads: %lf\n", nthreads, tempo_total);
+
+    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
+    retangulo_maior = fabs(retangulo_maior);
+
+    GET_TIME(inicio);
 
     for (i = 0; i < nthreads; i++)
     {
@@ -133,7 +142,12 @@ int main(int argc, char *argv[])
             exit(-1);
         }
     }
-    printf("Resposta da Concorrente: %f\n", resp_conc);
+
+    GET_TIME(fim);
+    tempo_total = fim - inicio;
+    printf("Tempo de execução das %d threads: %lf\n", nthreads, tempo_total);
+
+    printf("Resposta da Integral: %f\n", resp_conc);
 
     pthread_mutex_destroy(&mutex);
 

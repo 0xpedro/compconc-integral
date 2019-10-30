@@ -58,15 +58,14 @@ int main(int argc, char *argv[])
 
     retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
     retangulo_maior = fabs(retangulo_maior);
-
     resp_seq = calculaIntegralSequencial();
 
     GET_TIME(fim);
 
     tempo_total = fim - inicio;
 
-    printf("Resposta da Sequencial: %f\n", resp_seq);
-    printf("Tempo total de execução: %.8lf\n", tempo_total);
+    printf("Resposta da Integral da função D: %f\n", resp_seq);
+    printf("Tempo total de execução do calculo da função D: %.8lf\n", tempo_total);
 
     return 0;
 }
