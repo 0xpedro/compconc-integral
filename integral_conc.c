@@ -59,7 +59,7 @@ void *calculaIntegralConcorrente(void *arg)
                 }
 
                 numero_intervalos++;
-                retangulo_maior = resp_conc;
+                retangulo_maior = fabs(resp_conc);
                 resp_conc = 0;
                 n_threads_executadas = 0;
                 pthread_cond_broadcast(&cond);
