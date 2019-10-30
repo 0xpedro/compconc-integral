@@ -5,26 +5,26 @@
 #include "timer.h"
 
 int nthreads, limite_inferior, limite_superior, numero_intervalos = 2, n_threads_executadas = 0, lock = 0, calculou = 0;
-float erro, resp_conc, retangulo_maior;
+double erro, resp_conc, retangulo_maior;
 pthread_mutex_t mutex;
 pthread_cond_t cond;
 
-float funcaoA(float x);
-float funcaoB(float x);
-float funcaoC(float x);
-float funcaoD(float x);
-float funcaoE(float x);
-float funcaoF(float x);
-float funcaoG(float x);
+double funcaoA(double x);
+double funcaoB(double x);
+double funcaoC(double x);
+double funcaoD(double x);
+double funcaoE(double x);
+double funcaoF(double x);
+double funcaoG(double x);
 
 void *calculaIntegralConcorrente(void *arg)
 {
     int i, thread_id = *(int *)arg;
-    float div, resp;
+    double div, resp;
 
     while (!calculou)
     {
-        div = (float)(limite_superior - limite_inferior) / numero_intervalos;
+        div = (double)(limite_superior - limite_inferior) / numero_intervalos;
 
         resp = 0;
         for (i = thread_id; i <= numero_intervalos; i += nthreads)
@@ -46,7 +46,7 @@ void *calculaIntegralConcorrente(void *arg)
         else
         {
             //printf("Thread %d fazendo verificação\n", thread_id);
-            //printf("valor da diferença entre as areas conc: %f\n", fabs(retangulo_maior - fabs(resp_conc)));
+            //printf("valor da diferença entre as areas conc: %lf\n", fabs(retangulo_maior - fabs(resp_conc)));
             if (fabs(retangulo_maior - fabs(resp_conc)) < erro)
             {
                 calculou = 1;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     tempo_total = fim - inicio;
     printf("Tempo de inicialização das %d threads: %lf\n", nthreads, tempo_total);
 
-    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
+    retangulo_maior = (double)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
     retangulo_maior = fabs(retangulo_maior);
 
     GET_TIME(inicio);
@@ -147,19 +147,19 @@ int main(int argc, char *argv[])
     tempo_total = fim - inicio;
     printf("Tempo de execução das %d threads: %lf\n", nthreads, tempo_total);
 
-    printf("Resposta da Integral: %f\n", resp_conc);
+    printf("Resposta da Integral: %lf\n", fabs(resp_conc));
 
     pthread_mutex_destroy(&mutex);
 
     return 0;
 }
 
-float funcaoA(float x)
+double funcaoA(double x)
 {
     return 1 + x;
 }
 
-float funcaoB(float x)
+double funcaoB(double x)
 {
     if (x < -1 || x > 1)
     {
@@ -169,27 +169,27 @@ float funcaoB(float x)
     return sqrt(1 - pow(x, 2));
 }
 
-float funcaoC(float x)
+double funcaoC(double x)
 {
     return sqrt(1 + pow(x, 4));
 }
 
-float funcaoD(float x)
+double funcaoD(double x)
 {
     return sin(pow(x, 2));
 }
 
-float funcaoE(float x)
+double funcaoE(double x)
 {
     return cos(pow(M_E, -x));
 }
 
-float funcaoF(float x)
+double funcaoF(double x)
 {
     return cos(pow(M_E, -x)) * x;
 }
 
-float funcaoG(float x)
+double funcaoG(double x)
 {
     return cos(pow(M_E, -x)) * (0.005 * pow(x, 3) + 1);
 }

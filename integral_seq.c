@@ -5,22 +5,22 @@
 #include "timer.h"
 
 int limite_inferior, limite_superior, numero_intervalos = 2;
-float erro, resp_seq, retangulo_maior;
+double erro, resp_seq, retangulo_maior;
 
-float funcaoA(float x);
-float funcaoB(float x);
-float funcaoC(float x);
-float funcaoD(float x);
-float funcaoE(float x);
-float funcaoF(float x);
-float funcaoG(float x);
+double funcaoA(double x);
+double funcaoB(double x);
+double funcaoC(double x);
+double funcaoD(double x);
+double funcaoE(double x);
+double funcaoF(double x);
+double funcaoG(double x);
 
-float calculaIntegralSequencial()
+double calculaIntegralSequencial()
 {
-    float div, resp = 0;
+    double div, resp = 0;
     int i;
 
-    div = (float)(limite_superior - limite_inferior) / numero_intervalos;
+    div = (double)(limite_superior - limite_inferior) / numero_intervalos;
 
     for (i = 1; i <= numero_intervalos; i++)
     {
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     GET_TIME(inicio);
 
-    retangulo_maior = (float)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
+    retangulo_maior = (double)(limite_superior - limite_inferior) * funcaoD((limite_inferior + limite_superior) / 2);
     retangulo_maior = fabs(retangulo_maior);
     resp_seq = calculaIntegralSequencial();
 
@@ -64,18 +64,18 @@ int main(int argc, char *argv[])
 
     tempo_total = fim - inicio;
 
-    printf("Resposta da Integral da função D: %f\n", resp_seq);
+    printf("Resposta da Integral da função D: %lf\n", resp_seq);
     printf("Tempo total de execução do calculo da função D: %.8lf\n", tempo_total);
 
     return 0;
 }
 
-float funcaoA(float x)
+double funcaoA(double x)
 {
     return 1 + x;
 }
 
-float funcaoB(float x)
+double funcaoB(double x)
 {
     if (x < -1 || x > 1)
     {
@@ -85,27 +85,27 @@ float funcaoB(float x)
     return sqrt(1 - pow(x, 2));
 }
 
-float funcaoC(float x)
+double funcaoC(double x)
 {
     return sqrt(1 + pow(x, 4));
 }
 
-float funcaoD(float x)
+double funcaoD(double x)
 {
     return sin(pow(x, 2));
 }
 
-float funcaoE(float x)
+double funcaoE(double x)
 {
     return cos(pow(M_E, -x));
 }
 
-float funcaoF(float x)
+double funcaoF(double x)
 {
     return cos(pow(M_E, -x)) * x;
 }
 
-float funcaoG(float x)
+double funcaoG(double x)
 {
     return cos(pow(M_E, -x)) * (0.005 * pow(x, 3) + 1);
 }
